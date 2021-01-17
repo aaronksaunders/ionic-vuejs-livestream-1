@@ -19,6 +19,7 @@
           v-for="message in messages"
           :key="message.id"
           :message="message"
+          @delete-item="handleMessageDelete"
         />
       </ion-list>
 
@@ -30,14 +31,25 @@
         ></a-modal>
       </ion-modal>
       <!-- CONFIRMATION TOAST -->
-      <ion-toast 
-       :color="alertInfo.color"
-        :is-open="alertInfo.showMe"
-        :message="alertInfo.message"
+      <ion-toast
+        :color="toastInfo.color"
+        :is-open="toastInfo.showMe"
+        :message="toastInfo.message"
         :duration="2000"
-        @onDidDismiss="alertInfo.showMe = false"
+        @onDidDismiss="toastInfo.showMe = false"
       >
       </ion-toast>
+
+      <!-- before delete -->
+      <ion-alert
+        :is-open="deleteAlertInfo.showMe"
+        header="Alert"
+        sub-header="Warning"
+        message="Are You Sure You Want To Delete This Item"
+        :buttons="deleteAlertInfo.buttons"
+        @onDidDismiss="deleteAlertInfo.showMe = false"
+      >
+      </ion-alert>
     </ion-content>
   </ion-page>
 </template>
@@ -55,11 +67,12 @@ import {
   IonButton,
   IonButtons,
   IonModal,
-  IonToast
+  IonToast,
+  IonAlert
 } from "@ionic/vue";
 import MessageListItem from "@/components/MessageListItem.vue";
 import { defineComponent } from "vue";
-import { getMessages } from "@/data/messages";
+import { getMessages, addMessage, deleteMessage } from "@/data/messages";
 import AModal from "@/components/AModal.vue";
 
 export default defineComponent({
@@ -72,14 +85,48 @@ export default defineComponent({
         showMe: false
       },
       // Info for displaying the alert
-      alertInfo: {
+      toastInfo: {
         showMe: false,
         message: "",
-        color : ""
+        color: ""
+      },
+      // delete alert info
+      deleteAlertInfo: {
+        showMe: false,
+        buttons: {}
       }
     };
   },
   methods: {
+    deleteMessageConfirmed(id: any) {
+      deleteMessage(id);
+
+      // display toast
+      this.toastInfo = {
+        showMe: true,
+        message: "User Deleted Item",
+        color: "primary"
+      };
+    },
+    /**
+     * called to delete the message in response to
+     * delete-item event emitted
+     */
+    handleMessageDelete(_event: any) {
+      // show alert to confirm delete
+      this.deleteAlertInfo = {
+        showMe: true,
+        buttons: [
+          { text : "Cancel"},
+          {
+            text: "YES - Delete Message",
+            handler: () => {
+              this.deleteMessageConfirmed(_event.id);
+            }
+          }
+        ]
+      };
+    },
     /**
      * called to close the modal in response to
      * cancelled event emitted
@@ -89,7 +136,7 @@ export default defineComponent({
       this.addItemModalInfo.showMe = false;
 
       // display toast
-      this.alertInfo = {
+      this.toastInfo = {
         showMe: true,
         message: "User Cancelled Input",
         color: "danger"
@@ -104,9 +151,10 @@ export default defineComponent({
       this.addItemModalInfo.showMe = false;
 
       // STEP TO SAVE TO DATABASE....
+      addMessage(_event);
 
       // display toast
-      this.alertInfo = {
+      this.toastInfo = {
         showMe: true,
         message: "User Input Saved",
         color: "primary"
@@ -135,7 +183,8 @@ export default defineComponent({
     IonButtons,
     IonModal,
     AModal,
-    IonToast
+    IonToast,
+    IonAlert
   }
 });
 </script>
