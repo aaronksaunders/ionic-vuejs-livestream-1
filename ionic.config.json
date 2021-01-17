@@ -1,0 +1,7 @@
+{
+  "name": "simple-with-modal",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
