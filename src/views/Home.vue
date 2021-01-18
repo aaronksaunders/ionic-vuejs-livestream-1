@@ -10,13 +10,14 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
+      <ion-loading :is-open="isLoading" message="Loading"></ion-loading>
       <ion-refresher slot="fixed" @ionRefresh="refresh($event)">
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
 
       <ion-list>
         <MessageListItem
-          v-for="message in messages"
+          v-for="message in displayMessages"
           :key="message.id"
           :message="message"
           @delete-item="handleMessageDelete"
@@ -68,18 +69,31 @@ import {
   IonButtons,
   IonModal,
   IonToast,
-  IonAlert
+  IonAlert,
+  IonLoading
+
 } from "@ionic/vue";
 import MessageListItem from "@/components/MessageListItem.vue";
 import { defineComponent } from "vue";
-import { getMessages, addMessage, deleteMessage } from "@/data/messages";
+import {
+  getMessages,
+  addMessage,
+  deleteMessage,
+  messages,
+  loading
+} from "@/data/messages";
 import AModal from "@/components/AModal.vue";
 
 export default defineComponent({
   name: "Home",
+  computed: {
+    isLoading: () => {
+      return loading.value ? true : false 
+    }
+  },
   data() {
     return {
-      messages: getMessages(),
+      displayMessages: [{}],
       // Info for displaying the modal
       addItemModalInfo: {
         showMe: false
@@ -117,7 +131,7 @@ export default defineComponent({
       this.deleteAlertInfo = {
         showMe: true,
         buttons: [
-          { text : "Cancel"},
+          { text: "Cancel" },
           {
             text: "YES - Delete Message",
             handler: () => {
@@ -164,10 +178,13 @@ export default defineComponent({
       this.addItemModalInfo.showMe = true;
     },
     refresh: (ev: CustomEvent) => {
-      setTimeout(() => {
-        ev.detail.complete();
-      }, 3000);
+      getMessages();
+      (ev.target as any).complete();
     }
+  },
+  async mounted() {
+    await getMessages();
+    this.displayMessages = messages;
   },
   components: {
     IonContent,
@@ -184,7 +201,8 @@ export default defineComponent({
     IonModal,
     AModal,
     IonToast,
-    IonAlert
+    IonAlert,
+    IonLoading
   }
 });
 </script>

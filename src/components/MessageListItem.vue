@@ -1,36 +1,48 @@
 <template>
-  <ion-item v-if="message" :detail="false" class="list-item">
-    <div slot="start" :class="!message.read ? 'dot dot-unread' : 'dot'"></div>
-    <ion-label class="ion-text-wrap">
-      <div @click="$router.push('/message/' + message?.id)">
-        <h2>
-          {{ message.fromName }}
-          <span class="date">
-            <ion-note>{{ message.date }}</ion-note>
-            <ion-icon
-              :icon="chevronForward"
-              size="small"
-              v-if="isIos()"
-            ></ion-icon>
-          </span>
-        </h2>
-        <h3>{{ message.subject }}</h3>
-        <p>
-          {{ message.body }}
-        </p>
-      </div>
-      <div>
-        <ion-button size="small" color="danger" @click="onDelete"
-          >DELETE</ion-button
-        >
-      </div>
-    </ion-label>
-  </ion-item>
+  <ion-item-sliding v-if="message" ref="theItem">
+    <ion-item :detail="false" class="list-item">
+      <div slot="start" :class="!message.read ? 'dot dot-unread' : 'dot'"></div>
+      <ion-label class="ion-text-wrap">
+        <div @click="$router.push('/message/' + message?.id)">
+          <h2>
+            {{ message.fromName }}
+            <span class="date">
+              <ion-note>{{ message.date }}</ion-note>
+              <ion-icon
+                :icon="chevronForward"
+                size="small"
+                v-if="isIos()"
+              ></ion-icon>
+            </span>
+          </h2>
+          <h3>{{ message.subject }}</h3>
+          <p>
+            {{ message.body }}
+          </p>
+        </div>
+      </ion-label>
+    </ion-item>
+
+    <!-- options -->
+    <ion-item-options side="end">
+      <ion-item-option @click="onDelete" color="danger">
+        <ion-icon :icon="trashBin" style="zoom : 2"></ion-icon>
+      </ion-item-option>
+    </ion-item-options>
+  </ion-item-sliding>
 </template>
 
 <script lang="ts">
-import { IonIcon, IonItem, IonLabel, IonNote, IonButton } from "@ionic/vue";
-import { chevronForward } from "ionicons/icons";
+import {
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonNote,
+  IonItemSliding,
+  IonItemOption,
+  IonItemOptions
+} from "@ionic/vue";
+import { chevronForward, trashBin } from "ionicons/icons";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -40,13 +52,17 @@ export default defineComponent({
     IonItem,
     IonLabel,
     IonNote,
-    IonButton
+    IonItemSliding,
+    IonItemOption,
+    IonItemOptions
   },
   props: {
     message: Object
   },
   methods: {
-    onDelete() {
+    async onDelete() {
+      // why do I need to wrap this??
+      await (this.$refs.theItem as any).$el.close();
       this.$emit("delete-item", { id: this.message?.id });
     },
 
@@ -56,7 +72,7 @@ export default defineComponent({
     }
   },
   data() {
-    return { chevronForward };
+    return { chevronForward, trashBin};
   }
 });
 </script>
