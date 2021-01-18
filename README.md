@@ -3,8 +3,12 @@ Ionic Framework VueJS - More VueJS Content Working With Modal, Toast &amp; Emitt
 
 ### FROM LIVESTREAM VIDEO DESCRIPTION
 
-#### SEE PART ONE VIDEO - https://youtu.be/JjwLwwX8ON4 SOURCE TAG: https://github.com/aaronksaunders/ionic-vuejs-livestream-1/tree/PART-ONE
-#### SEE PART TWO VIDEO - https://youtu.be/jEVgY6Y_ls0 SOURCE TAG: https://github.com/aaronksaunders/ionic-vuejs-livestream-1/tree/PART-TWO
+#### SEE PART ONE VIDEO 
+- https://youtu.be/JjwLwwX8ON4 
+- SOURCE TAG: https://github.com/aaronksaunders/ionic-vuejs-livestream-1/tree/PART-ONE
+#### SEE PART TWO VIDEO 
+- https://youtu.be/jEVgY6Y_ls0 
+- SOURCE TAG: https://github.com/aaronksaunders/ionic-vuejs-livestream-1/tree/PART-TWO
 
 #ionic #vuejs #javascript
 
